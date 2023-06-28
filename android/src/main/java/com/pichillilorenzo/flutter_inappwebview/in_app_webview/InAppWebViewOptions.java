@@ -109,6 +109,7 @@ public class InAppWebViewOptions implements Options<InAppWebViewInterface> {
   public String horizontalScrollbarThumbColor;
   @Nullable
   public String horizontalScrollbarTrackColor;
+  public Boolean needExtraBottomPadding = false;
 
   @Override
   public InAppWebViewOptions parse(Map<String, Object> options) {
@@ -363,6 +364,9 @@ public class InAppWebViewOptions implements Options<InAppWebViewInterface> {
         case "horizontalScrollbarTrackColor":
           horizontalScrollbarTrackColor = (String) value;
           break;
+        case "needExtraBottomPadding":
+          needExtraBottomPadding = (Boolean) value;
+          break;
       }
     }
 
@@ -453,6 +457,7 @@ public class InAppWebViewOptions implements Options<InAppWebViewInterface> {
     options.put("verticalScrollbarTrackColor", verticalScrollbarTrackColor);
     options.put("horizontalScrollbarThumbColor", horizontalScrollbarThumbColor);
     options.put("horizontalScrollbarTrackColor", horizontalScrollbarTrackColor);
+    options.put("needExtraBottomPadding", needExtraBottomPadding);
     return options;
   }
 

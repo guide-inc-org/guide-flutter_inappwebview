@@ -36,6 +36,7 @@ public class InAppWebViewOptions: Options<InAppWebView> {
     var supportZoom = true
     var allowUniversalAccessFromFileURLs = false
     var allowFileAccessFromFileURLs = false
+    var needExtraBottomPadding = false
 
     var disallowOverScroll = false
     var enableViewportScale = false
@@ -124,6 +125,7 @@ public class InAppWebViewOptions: Options<InAppWebView> {
             realOptions["maximumZoomScale"] = webView.scrollView.maximumZoomScale
             realOptions["minimumZoomScale"] = webView.scrollView.minimumZoomScale
             realOptions["allowUniversalAccessFromFileURLs"] = configuration.value(forKey: "allowUniversalAccessFromFileURLs")
+            realOptions["needExtraBottomPadding"] = configuration.value(forKey: "needExtraBottomPadding")
             realOptions["allowFileAccessFromFileURLs"] = configuration.preferences.value(forKey: "allowFileAccessFromFileURLs")
             realOptions["isDirectionalLockEnabled"] = webView.scrollView.isDirectionalLockEnabled
             realOptions["javaScriptEnabled"] = configuration.preferences.javaScriptEnabled

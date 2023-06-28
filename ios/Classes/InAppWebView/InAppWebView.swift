@@ -92,8 +92,9 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
                 // always be 0.
                 if (scrollView.adjustedContentInset != UIEdgeInsets.zero) {
                     let insetToAdjust = self.scrollView.adjustedContentInset;
+                    let bottom = self.options?.needExtraBottomPadding == true ? 0 : -insetToAdjust.bottom;
                     scrollView.contentInset = UIEdgeInsets(top: -insetToAdjust.top, left: -insetToAdjust.left,
-                                                                bottom: -insetToAdjust.bottom, right: -insetToAdjust.right);
+                                                                bottom: bottom, right: -insetToAdjust.right);
                 }
             }
         }

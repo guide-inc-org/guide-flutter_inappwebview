@@ -205,6 +205,9 @@ class InAppWebViewOptions
   ///The default value is `false`.
   bool allowUniversalAccessFromFileURLs;
 
+  ///Set to `true` if the WebView extra bottom padding when opening the keyboard. The default value is `false`.
+  bool needExtraBottomPadding;
+
   InAppWebViewOptions(
       {this.useShouldOverrideUrlLoading = false,
       this.useOnLoadResource = false,
@@ -231,7 +234,8 @@ class InAppWebViewOptions
       this.disableContextMenu = false,
       this.supportZoom = true,
       this.allowFileAccessFromFileURLs = false,
-      this.allowUniversalAccessFromFileURLs = false}) {
+      this.allowUniversalAccessFromFileURLs = false,
+      this.needExtraBottomPadding = false}) {
     if (this.minimumFontSize == null)
       this.minimumFontSize =
           defaultTargetPlatform == TargetPlatform.android ? 8 : 0;
@@ -272,7 +276,8 @@ class InAppWebViewOptions
       "disableContextMenu": disableContextMenu,
       "supportZoom": supportZoom,
       "allowFileAccessFromFileURLs": allowFileAccessFromFileURLs,
-      "allowUniversalAccessFromFileURLs": allowUniversalAccessFromFileURLs
+      "allowUniversalAccessFromFileURLs": allowUniversalAccessFromFileURLs,
+      "needExtraBottomPadding": needExtraBottomPadding,
     };
   }
 
@@ -318,8 +323,8 @@ class InAppWebViewOptions
     options.disableContextMenu = map["disableContextMenu"];
     options.supportZoom = map["supportZoom"];
     options.allowFileAccessFromFileURLs = map["allowFileAccessFromFileURLs"];
-    options.allowUniversalAccessFromFileURLs =
-        map["allowUniversalAccessFromFileURLs"];
+    options.allowUniversalAccessFromFileURLs = map["allowUniversalAccessFromFileURLs"];
+    options.needExtraBottomPadding = map["needExtraBottomPadding"];
     return options;
   }
 
