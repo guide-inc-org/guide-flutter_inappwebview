@@ -87,13 +87,23 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
             super.frame = newValue
             
             self.scrollView.contentInset = UIEdgeInsets.zero;
+            var bottomPadding: CGFloat = 0.0;
+            if #available(iOS 11.0, *) {
+                let window = UIApplication.shared.keyWindow;
+                bottomPadding = window?.safeAreaInsets.bottom ?? 0.0;
+            }
+            if #available(iOS 13.0, *) {
+                let window = UIApplication.shared.windows.first;
+                bottomPadding = window?.safeAreaInsets.bottom ?? 0.0;
+            }
             if #available(iOS 11, *) {
                 // Above iOS 11, adjust contentInset to compensate the adjustedContentInset so the sum will
                 // always be 0.
                 if (scrollView.adjustedContentInset != UIEdgeInsets.zero) {
                     let insetToAdjust = self.scrollView.adjustedContentInset;
+                    let bottom = self.options?.needExtraBottomPadding == true ? bottomPadding : -insetToAdjust.bottom;
                     scrollView.contentInset = UIEdgeInsets(top: -insetToAdjust.top, left: -insetToAdjust.left,
-                                                                bottom: -insetToAdjust.bottom, right: -insetToAdjust.right);
+                                                                bottom: bottom, right: -insetToAdjust.right);
                 }
             }
         }
