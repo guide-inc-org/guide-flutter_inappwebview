@@ -1,19 +1,24 @@
 package com.pichillilorenzo.flutter_inappwebview.in_app_webview;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
 
@@ -31,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.flutter.plugin.common.MethodChannel;
 
@@ -42,6 +48,8 @@ public class FlutterWebView implements PlatformWebView {
   public final MethodChannel channel;
   public InAppWebViewMethodHandler methodCallDelegate;
   public PullToRefreshLayout pullToRefreshLayout;
+  public LinearLayout linearLayout;
+  private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener;
 
   public FlutterWebView(final InAppWebViewFlutterPlugin plugin, final Context context, Object id,
                         HashMap<String, Object> params) {
@@ -50,7 +58,7 @@ public class FlutterWebView implements PlatformWebView {
     DisplayListenerProxy displayListenerProxy = new DisplayListenerProxy();
     DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
     displayListenerProxy.onPreWebViewInitialization(displayManager);
-    
+
     Map<String, Object> initialOptions = (Map<String, Object>) params.get("initialOptions");
     Map<String, Object> contextMenu = (Map<String, Object>) params.get("contextMenu");
     Integer windowId = (Integer) params.get("windowId");
@@ -79,14 +87,50 @@ public class FlutterWebView implements PlatformWebView {
     pullToRefreshLayout.addView(webView);
     pullToRefreshLayout.prepare();
 
+    if (options.needExtraBottomPadding) {
+      linearLayout = new LinearLayout(context);
+      linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+      linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+      if (pullToRefreshLayout != null) {
+        linearLayout.addView(pullToRefreshLayout);
+      } else {
+        linearLayout.addView(webView);
+      }
+
+      keyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+          if (plugin.activity == null) {
+            return;
+          }
+
+          WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(plugin.activity.getWindow().getDecorView());
+          if (insets == null) {
+            return;
+          }
+
+          int bottomHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom - getNavigationHeight();
+          linearLayout.setPadding(0, 0, 0, Math.max(bottomHeight, 0));
+        }
+      };
+    }
+
     methodCallDelegate = new InAppWebViewMethodHandler(webView);
     channel.setMethodCallHandler(methodCallDelegate);
 
     webView.prepare();
+
+    if (keyboardLayoutListener != null) {
+      Objects.requireNonNull(getView()).getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
+    }
   }
 
   @Override
   public View getView() {
+    if (linearLayout != null) {
+      return linearLayout;
+    }
     return pullToRefreshLayout != null ? pullToRefreshLayout : webView;
   }
 
@@ -129,6 +173,10 @@ public class FlutterWebView implements PlatformWebView {
   @Override
   public void dispose() {
     channel.setMethodCallHandler(null);
+    if (keyboardLayoutListener != null) {
+      Objects.requireNonNull(getView()).getViewTreeObserver().removeOnGlobalLayoutListener(keyboardLayoutListener);
+      keyboardLayoutListener = null;
+    }
     if (methodCallDelegate != null) {
       methodCallDelegate.dispose();
       methodCallDelegate = null;
@@ -151,11 +199,13 @@ public class FlutterWebView implements PlatformWebView {
           webView.dispose();
           webView.destroy();
           webView = null;
-          
+
           if (pullToRefreshLayout != null) {
             pullToRefreshLayout.dispose();
             pullToRefreshLayout = null;
           }
+
+          linearLayout = null;
         }
       });
       WebSettings settings = webView.getSettings();
@@ -189,4 +239,15 @@ public class FlutterWebView implements PlatformWebView {
       webView.setContainerView(null);
     }
   }
+
+    private int getNavigationHeight() {
+        if (getView() == null) return 0;
+        Resources resources = Objects.requireNonNull(getView()).getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
 }
