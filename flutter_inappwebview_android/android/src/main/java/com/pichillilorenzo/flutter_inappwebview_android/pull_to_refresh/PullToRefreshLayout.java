@@ -32,6 +32,7 @@ public class PullToRefreshLayout extends SwipeRefreshLayout implements Disposabl
   @Nullable
   public PullToRefreshChannelDelegate channelDelegate;
   public PullToRefreshSettings settings = new PullToRefreshSettings();
+  // SYND: Custom lottie indicator
   private LottieDrawable lottieDrawable = new LottieDrawable();
 
   public PullToRefreshLayout(@NonNull Context context, @NonNull InAppWebViewFlutterPlugin plugin,
