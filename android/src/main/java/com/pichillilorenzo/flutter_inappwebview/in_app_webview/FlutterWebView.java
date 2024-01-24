@@ -50,6 +50,7 @@ public class FlutterWebView implements PlatformWebView {
   public PullToRefreshLayout pullToRefreshLayout;
   public LinearLayout linearLayout;
   private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener;
+  private View rootView;
 
   public FlutterWebView(final InAppWebViewFlutterPlugin plugin, final Context context, Object id,
                         HashMap<String, Object> params) {
@@ -80,6 +81,7 @@ public class FlutterWebView implements PlatformWebView {
 
     // set MATCH_PARENT layout params to the WebView, otherwise it won't take all the available space!
     webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    rootView = plugin.activity.findViewById(android.R.id.content);
     MethodChannel pullToRefreshLayoutChannel = new MethodChannel(plugin.messenger, "com.pichillilorenzo/flutter_inappwebview_pull_to_refresh_" + id);
     PullToRefreshOptions pullToRefreshOptions = new PullToRefreshOptions();
     pullToRefreshOptions.parse(pullToRefreshInitialOptions);
@@ -122,7 +124,7 @@ public class FlutterWebView implements PlatformWebView {
     webView.prepare();
 
     if (keyboardLayoutListener != null) {
-      Objects.requireNonNull(getView()).getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
+      Objects.requireNonNull(rootView).getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
     }
   }
 
@@ -174,7 +176,7 @@ public class FlutterWebView implements PlatformWebView {
   public void dispose() {
     channel.setMethodCallHandler(null);
     if (keyboardLayoutListener != null) {
-      Objects.requireNonNull(getView()).getViewTreeObserver().removeOnGlobalLayoutListener(keyboardLayoutListener);
+      Objects.requireNonNull(rootView).getViewTreeObserver().removeOnGlobalLayoutListener(keyboardLayoutListener);
       keyboardLayoutListener = null;
     }
     if (methodCallDelegate != null) {
