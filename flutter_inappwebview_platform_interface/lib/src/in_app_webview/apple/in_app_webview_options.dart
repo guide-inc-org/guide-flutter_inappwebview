@@ -226,6 +226,8 @@ class IOSInAppWebViewOptions
   ///Set to `true` to disable the [inputAccessoryView](https://developer.apple.com/documentation/uikit/uiresponder/1621119-inputaccessoryview) above system keyboard.
   ///The default value is `false`.
   bool disableInputAccessoryView;
+  ///Set to `true` if the WebView extra bottom padding when opening the keyboard. The default value is `false`.
+  bool needExtraBottomPadding;
 
   IOSInAppWebViewOptions(
       {this.disallowOverScroll = false,
@@ -260,7 +262,9 @@ class IOSInAppWebViewOptions
       this.applePayAPIEnabled = false,
       this.allowingReadAccessTo,
       this.disableLongPressContextMenuOnLinks = false,
-      this.disableInputAccessoryView = false}) {
+      this.disableInputAccessoryView = false,
+      this.needExtraBottomPadding = false,
+      }) {
     assert(
         allowingReadAccessTo == null || allowingReadAccessTo!.isScheme("file"));
   }
@@ -309,6 +313,7 @@ class IOSInAppWebViewOptions
       "allowingReadAccessTo": allowingReadAccessTo.toString(),
       "disableLongPressContextMenuOnLinks": disableLongPressContextMenuOnLinks,
       "disableInputAccessoryView": disableInputAccessoryView,
+      "needExtraBottomPadding": needExtraBottomPadding,
     };
   }
 
@@ -372,6 +377,7 @@ class IOSInAppWebViewOptions
     instance.disableLongPressContextMenuOnLinks =
         map["disableLongPressContextMenuOnLinks"];
     instance.disableInputAccessoryView = map["disableInputAccessoryView"];
+    instance.needExtraBottomPadding = map["needExtraBottomPadding"];
     return instance;
   }
 
