@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'in_app_webview/headless_in_app_webview.dart';
 import 'in_app_webview/in_app_webview_controller.dart';
 import 'in_app_webview/in_app_webview_options.dart';
-import 'in_app_webview/headless_in_app_webview.dart';
 import 'platform_util.dart';
-
 import 'types.dart';
 
 ///Class that implements a singleton object (shared instance) which manages the cookies used by WebView instances.
@@ -387,7 +386,7 @@ class CookieManager {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       final platformUtil = PlatformUtil.instance();
       final systemVersion = await platformUtil.getSystemVersion();
-      return systemVersion.compareTo("11") == -1;
+      return systemVersion.compareTo("14") == -1;
     }
     return false;
   }
