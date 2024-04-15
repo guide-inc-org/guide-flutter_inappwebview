@@ -8,6 +8,6 @@
 import Foundation
 import WebKit
 
-class WKProcessPoolManager {
-    static let sharedProcessPool = WKProcessPool()
+public class WKProcessPoolManager {
+    public static let sharedProcessPool = WKProcessPool()
 }
