@@ -335,6 +335,14 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
                                                selector: #selector(onExitFullscreen(_:)),
                                                name: UIWindow.didBecomeHiddenNotification,
                                                object: window)
+
+        // listen only for iOS 13.* and earlier
+        if #unavailable(iOS 14) {
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(keyboardWillHide(notification:)),
+                                                   name: UIResponder.keyboardWillHideNotification ,
+                                                   object:nil)
+        }
         
         if let options = options {
             if options.transparentBackground {
@@ -432,6 +440,12 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
                 configuration.defaultWebpagePreferences.allowsContentJavaScript = options.javaScriptEnabled
             }
         }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        // sometimes scrollView.contentSize doesn't fit all the frame.size available
+        // so, we call setNeedsLayout to redraw the layout
+        setNeedsLayout()
     }
     
     public func prepareAndAddUserScripts() -> Void {
