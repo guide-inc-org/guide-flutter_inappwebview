@@ -396,6 +396,10 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
     if (customSettings.regexToCancelSubFramesLoading != null) {
       regexToCancelSubFramesLoadingCompiled = Pattern.compile(customSettings.regexToCancelSubFramesLoading);
     }
+    // SYND: Custom scrollbar size
+    if (customSettings.scrollBarSize != null) {
+      setScrollBarSize(customSettings.scrollBarSize);
+    }
     setScrollBarStyle(customSettings.scrollBarStyle);
     if (customSettings.scrollBarDefaultDelayBeforeFade != null) {
       setScrollBarDefaultDelayBeforeFade(customSettings.scrollBarDefaultDelayBeforeFade);
@@ -1048,6 +1052,8 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
         contentBlockerHandler.getRuleList().add(new ContentBlocker(trigger, action));
       }
     }
+    if (newSettingsMap.get("scrollBarSize") != null && !customSettings.scrollBarSize.equals(newCustomSettings.scrollBarSize))
+      setScrollBarSize(newCustomSettings.scrollBarSize);
 
     if (newSettingsMap.get("scrollBarStyle") != null && !customSettings.scrollBarStyle.equals(newCustomSettings.scrollBarStyle))
       setScrollBarStyle(newCustomSettings.scrollBarStyle);

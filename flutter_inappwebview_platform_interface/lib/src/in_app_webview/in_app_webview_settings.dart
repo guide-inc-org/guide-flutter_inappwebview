@@ -824,6 +824,15 @@ as it can cause framerate drops on animations in Android 9 and lower (see [Hybri
   ])
   bool? networkAvailable;
 
+  ///Specifies the size of the scrollbars.
+  @SupportedPlatforms(platforms: [
+    AndroidPlatform(
+        apiName: "View.setScrollBarSize",
+        apiUrl:
+        "https://developer.android.com/reference/android/view/View#setScrollBarSize(int)")
+  ])
+  int? scrollBarSize;
+
   ///Specifies the style of the scrollbars. The scrollbars can be overlaid or inset.
   ///When inset, they add to the padding of the view. And the scrollbars can be drawn inside the padding area or on the edge of the view.
   ///For example, if a view has a background drawable and you want to draw the scrollbars inside the padding specified by the drawable,
@@ -1695,6 +1704,7 @@ as it can cause framerate drops on animations in Android 9 and lower (see [Hybri
     this.useOnRenderProcessGone,
     this.overScrollMode = OverScrollMode_.IF_CONTENT_SCROLLS,
     this.networkAvailable,
+    this.scrollBarSize,
     this.scrollBarStyle = ScrollBarStyle_.SCROLLBARS_INSIDE_OVERLAY,
     this.verticalScrollbarPosition =
         VerticalScrollbarPosition_.SCROLLBAR_POSITION_DEFAULT,

@@ -106,6 +106,7 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
   public String regexToCancelSubFramesLoading;
   public Integer overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS;
   public Boolean networkAvailable = null;
+  public Integer scrollBarSize = null;
   public Integer scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY;
   public Integer verticalScrollbarPosition = View.SCROLLBAR_POSITION_DEFAULT;
   public Integer scrollBarDefaultDelayBeforeFade = null;
@@ -352,6 +353,9 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
         case "networkAvailable":
           networkAvailable = (Boolean) value;
           break;
+        case "scrollBarSize":
+          scrollBarSize = (Integer) value;
+          break;
         case "scrollBarStyle":
           scrollBarStyle = (Integer) value;
           break;
@@ -491,6 +495,7 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
     settings.put("regexToCancelSubFramesLoading", regexToCancelSubFramesLoading);
     settings.put("overScrollMode", overScrollMode);
     settings.put("networkAvailable", networkAvailable);
+    settings.put("scrollBarSize", scrollBarSize);
     settings.put("scrollBarStyle", scrollBarStyle);
     settings.put("verticalScrollbarPosition", verticalScrollbarPosition);
     settings.put("scrollBarDefaultDelayBeforeFade", scrollBarDefaultDelayBeforeFade);
@@ -585,6 +590,7 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
       realSettings.put("saveFormData", settings.getSaveFormData());
       realSettings.put("supportMultipleWindows", settings.supportMultipleWindows());
       realSettings.put("overScrollMode", webView.getOverScrollMode());
+      realSettings.put("scrollBarSize", webView.getScrollBarSize());
       realSettings.put("scrollBarStyle", webView.getScrollBarStyle());
       realSettings.put("verticalScrollbarPosition", webView.getVerticalScrollbarPosition());
       realSettings.put("scrollBarDefaultDelayBeforeFade", webView.getScrollBarDefaultDelayBeforeFade());

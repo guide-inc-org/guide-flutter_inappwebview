@@ -187,6 +187,9 @@ class AndroidInAppWebViewOptions
   ///This is used to set the JavaScript property `window.navigator.isOnline` and generates the online/offline event as specified in HTML5, sec. 5.7.7.
   bool? networkAvailable;
 
+  ///Specifies the size of the scrollbars.
+  int? scrollBarSize;
+
   ///Specifies the style of the scrollbars. The scrollbars can be overlaid or inset.
   ///When inset, they add to the padding of the view. And the scrollbars can be drawn inside the padding area or on the edge of the view.
   ///For example, if a view has a background drawable and you want to draw the scrollbars inside the padding specified by the drawable,
@@ -281,6 +284,7 @@ class AndroidInAppWebViewOptions
     this.useOnRenderProcessGone = false,
     this.overScrollMode = AndroidOverScrollMode.OVER_SCROLL_IF_CONTENT_SCROLLS,
     this.networkAvailable,
+    this.scrollBarSize,
     this.scrollBarStyle = AndroidScrollBarStyle.SCROLLBARS_INSIDE_OVERLAY,
     this.verticalScrollbarPosition =
         AndroidVerticalScrollbarPosition.SCROLLBAR_POSITION_DEFAULT,
@@ -343,6 +347,7 @@ class AndroidInAppWebViewOptions
       "useOnRenderProcessGone": useOnRenderProcessGone,
       "overScrollMode": overScrollMode?.toNativeValue(),
       "networkAvailable": networkAvailable,
+      "scrollBarSize": scrollBarSize,
       "scrollBarStyle": scrollBarStyle?.toNativeValue(),
       "verticalScrollbarPosition": verticalScrollbarPosition?.toNativeValue(),
       "scrollBarDefaultDelayBeforeFade": scrollBarDefaultDelayBeforeFade,
@@ -409,6 +414,7 @@ class AndroidInAppWebViewOptions
     instance.overScrollMode =
         AndroidOverScrollMode.fromNativeValue(map["overScrollMode"]);
     instance.networkAvailable = map["networkAvailable"];
+    instance.scrollBarSize = map["scrollBarSize"];
     instance.scrollBarStyle =
         AndroidScrollBarStyle.fromNativeValue(map["scrollBarStyle"]);
     instance.verticalScrollbarPosition =
