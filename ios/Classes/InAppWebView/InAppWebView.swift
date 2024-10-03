@@ -517,6 +517,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
             }
             
             if #available(iOS 9.0, *) {
+                configuration.allowsPictureInPictureMediaPlayback = options.allowsPictureInPictureMediaPlayback
                 if options.incognito {
                     configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
                 } else if options.cacheEnabled {
