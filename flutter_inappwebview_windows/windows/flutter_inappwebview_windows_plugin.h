@@ -23,6 +23,8 @@ namespace flutter_inappwebview_plugin
     std::unique_ptr<PlatformUtil> platformUtil;
 
     static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
+    static void RegisterManual(flutter::PluginRegistrarWindows* registrar);
+    static void Cleanup();
 
     FlutterInappwebviewWindowsPlugin(flutter::PluginRegistrarWindows* registrar);
 

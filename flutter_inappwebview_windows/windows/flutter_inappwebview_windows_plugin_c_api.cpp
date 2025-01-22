@@ -11,3 +11,13 @@ void FlutterInappwebviewWindowsPluginCApiRegisterWithRegistrar(
     flutter::PluginRegistrarManager::GetInstance()
     ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }
+
+void FlutterInappwebviewWindowsPluginRegisterManual(FlutterDesktopPluginRegistrarRef registrar) {
+  flutter_inappwebview_plugin::FlutterInappwebviewWindowsPlugin::RegisterManual(
+    flutter::PluginRegistrarManager::GetInstance()
+    ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
+}
+
+void FlutterInappwebviewWindowsPluginCleanup() {
+  flutter_inappwebview_plugin::FlutterInappwebviewWindowsPlugin::Cleanup();
+}

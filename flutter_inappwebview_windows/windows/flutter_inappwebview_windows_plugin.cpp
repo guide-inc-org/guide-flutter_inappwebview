@@ -22,8 +22,20 @@ namespace flutter_inappwebview_plugin
   void FlutterInappwebviewWindowsPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar)
   {
+    // auto plugin = std::make_unique<FlutterInappwebviewWindowsPlugin>(registrar);
+    // registrar->AddPlugin(std::move(plugin));
+  }
+
+  // static
+  void FlutterInappwebviewWindowsPlugin::RegisterManual(flutter::PluginRegistrarWindows* registrar) {
     auto plugin = std::make_unique<FlutterInappwebviewWindowsPlugin>(registrar);
     registrar->AddPlugin(std::move(plugin));
+  }
+
+  // static
+  void FlutterInappwebviewWindowsPlugin::Cleanup() {
+    // registrar->UnregisterTopLevelWindowProcDelegate(window_proc_id);
+    // TODO:
   }
 
   FlutterInappwebviewWindowsPlugin::FlutterInappwebviewWindowsPlugin(flutter::PluginRegistrarWindows* registrar)
