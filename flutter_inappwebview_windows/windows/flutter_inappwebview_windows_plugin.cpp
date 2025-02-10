@@ -41,10 +41,26 @@ namespace flutter_inappwebview_plugin
       {
         return HandleWindowProc(hWnd, message, wParam, lParam);
       });
+    
+    channel_ = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      registrar->messenger(),
+      "sbipc/inappwebview_channel",
+      &flutter::StandardMethodCodec::GetInstance());
+
+    channel_->SetMethodCallHandler(
+        [this](const flutter::MethodCall<flutter::EncodableValue>& call,
+              std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+          if (call.method_name().compare("disposePlugin") == 0) {
+            Dispose();
+            result->Success();
+          } else {
+            result->NotImplemented();
+          }
+        }
+    );
   }
 
-  FlutterInappwebviewWindowsPlugin::~FlutterInappwebviewWindowsPlugin()
-  {
+  void FlutterInappwebviewWindowsPlugin::Dispose() {
     if (registrar) {
       registrar->UnregisterTopLevelWindowProcDelegate(window_proc_id);
     }
@@ -56,6 +72,10 @@ namespace flutter_inappwebview_plugin
     platformUtil = nullptr;
   }
 
+  FlutterInappwebviewWindowsPlugin::~FlutterInappwebviewWindowsPlugin()
+  {
+    Dispose();
+  }
 
   std::optional<LRESULT> FlutterInappwebviewWindowsPlugin::HandleWindowProc(
     HWND hWnd,

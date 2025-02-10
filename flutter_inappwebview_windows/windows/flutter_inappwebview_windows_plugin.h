@@ -1,6 +1,7 @@
 #ifndef FLUTTER_PLUGIN_FLUTTER_INAPPWEBVIEW_PLUGIN_PLUGIN_H_
 #define FLUTTER_PLUGIN_FLUTTER_INAPPWEBVIEW_PLUGIN_PLUGIN_H_
 
+#include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 
 namespace flutter_inappwebview_plugin
@@ -21,6 +22,9 @@ namespace flutter_inappwebview_plugin
     std::unique_ptr<HeadlessInAppWebViewManager> headlessInAppWebViewManager;
     std::unique_ptr<CookieManager> cookieManager;
     std::unique_ptr<PlatformUtil> platformUtil;
+    std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
+
+    void Dispose(); // Manual disposal function
 
     static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 

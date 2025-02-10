@@ -615,4 +615,9 @@ class InAppWebViewController {
   ///{@macro flutter_inappwebview_platform_interface.PlatformInAppWebViewController.dispose}
   void dispose({bool isKeepAlive = false}) =>
       platform.dispose(isKeepAlive: isKeepAlive);
+
+  static Future<void> disposePlugin() {
+    const methodChannel = MethodChannel('sbipc/inappwebview_channel');
+    return methodChannel.invokeMethod('disposePlugin');
+  }
 }
