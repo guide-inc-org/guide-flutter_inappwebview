@@ -20,6 +20,9 @@ namespace flutter_inappwebview_plugin
     std::unique_ptr<InAppBrowserManager> inAppBrowserManager;
     std::unique_ptr<HeadlessInAppWebViewManager> headlessInAppWebViewManager;
     std::unique_ptr<CookieManager> cookieManager;
+    std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
+
+    void Dispose(); // Manual disposal function
 
     static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 

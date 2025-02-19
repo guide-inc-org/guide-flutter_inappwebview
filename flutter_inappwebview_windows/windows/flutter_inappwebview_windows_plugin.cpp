@@ -30,14 +30,37 @@ namespace flutter_inappwebview_plugin
     inAppBrowserManager = std::make_unique<InAppBrowserManager>(this);
     headlessInAppWebViewManager = std::make_unique<HeadlessInAppWebViewManager>(this);
     cookieManager = std::make_unique<CookieManager>(this);
+
+    channel_ = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      registrar->messenger(),
+      "sbipc/inappwebview_channel",
+      &flutter::StandardMethodCodec::GetInstance());
+
+    channel_->SetMethodCallHandler(
+        [this](const flutter::MethodCall<flutter::EncodableValue>& call,
+              std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+          if (call.method_name().compare("disposePlugin") == 0) {
+            Dispose();
+            result->Success();
+          } else {
+            result->NotImplemented();
+          }
+        }
+    );
+
   }
 
-  FlutterInappwebviewWindowsPlugin::~FlutterInappwebviewWindowsPlugin()
+  void FlutterInappwebviewWindowsPlugin::Dispose()
   {
     webViewEnvironmentManager = nullptr;
     inAppWebViewManager = nullptr;
     inAppBrowserManager = nullptr;
     headlessInAppWebViewManager = nullptr;
     cookieManager = nullptr;
+  }
+
+  FlutterInappwebviewWindowsPlugin::~FlutterInappwebviewWindowsPlugin()
+  {
+    Dispose();
   }
 }
