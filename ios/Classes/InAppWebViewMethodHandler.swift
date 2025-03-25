@@ -301,6 +301,12 @@ public class InAppWebViewMethodHandler: FlutterMethodCallDelegate {
                 webView?.zoomBy(zoomFactor: zoomFactor, animated: animated)
                 result(true)
                 break
+            case "setZoomBy":
+                let zoomValue = (arguments!["zoomValue"] as! NSNumber).floatValue
+                let animated = arguments!["animated"] as! Bool
+                webView?.setZoomBy(zoomValue: zoomValue, animated: animated)
+                result(true)
+                break
             case "reloadFromOrigin":
                 webView?.reloadFromOrigin()
                 result(true)

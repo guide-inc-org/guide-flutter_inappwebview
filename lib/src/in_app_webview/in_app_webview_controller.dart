@@ -422,6 +422,25 @@ class InAppWebViewController {
           }
         }
         break;
+      case "onZoomScaleEnd":
+        if ((_webview != null &&
+            // ignore: deprecated_member_use_from_same_package
+            (_webview!.onZoomScaleEnd != null)) ||
+            _inAppBrowser != null) {
+          double scale = call.arguments["scale"];
+          if (_webview != null) {
+            if (_webview!.onZoomScaleEnd != null)
+              _webview!.onZoomScaleEnd!(this, scale);
+            else {
+              // ignore: deprecated_member_use_from_same_package
+              // _webview!.androidOnScaleChanged!(this, oldScale, newScale);
+            }
+          } else {
+            // ignore: deprecated_member_use_from_same_package
+            _inAppBrowser!.onZoomScaleEnd(scale);
+          }
+        }
+        break;
       case "onReceivedIcon":
         if ((_webview != null && _webview!.androidOnReceivedIcon != null) ||
             _inAppBrowser != null) {
@@ -1889,6 +1908,19 @@ class InAppWebViewController {
     args.putIfAbsent('animated', () => iosAnimated ?? animated);
     return await _channel.invokeMethod('zoomBy', args);
   }
+
+  Future<void> setZoomBy({required double zoomValue, bool animated = false}) async {
+    assert(defaultTargetPlatform != TargetPlatform.android ||
+        (defaultTargetPlatform == TargetPlatform.android &&
+            zoomValue > 0.01 &&
+            zoomValue <= 100.0));
+
+    Map<String, dynamic> args = <String, dynamic>{};
+    args.putIfAbsent('zoomValue', () => zoomValue);
+    args.putIfAbsent('animated', () => animated);
+    return await _channel.invokeMethod('setZoomBy', args);
+  }
+
 
   ///Gets the URL that was originally requested for the current page.
   ///This is not always the same as the URL passed to [InAppWebView.onLoadStarted] because although the load for that URL has begun,

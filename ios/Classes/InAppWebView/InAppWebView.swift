@@ -42,6 +42,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
     var lastLongPressTouchPoint: CGPoint?
     
     var panGestureRecognizer: UIPanGestureRecognizer!
+    var pinchGestureRecognizer: UIPinchGestureRecognizer!
     
     var lastTouchPoint: CGPoint?
     var lastTouchPointTimestamp = Int64(Date().timeIntervalSince1970 * 1000)
@@ -77,6 +78,9 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
         panGestureRecognizer = UIPanGestureRecognizer()
         panGestureRecognizer.delegate = self
         panGestureRecognizer.addTarget(self, action: #selector(endDraggingDetected))
+        pinchGestureRecognizer = UIPinchGestureRecognizer()
+        pinchGestureRecognizer.delegate = self
+        pinchGestureRecognizer.addTarget(self, action: #selector(handlePinch))
     }
     
     override public var frame: CGRect {
@@ -289,11 +293,21 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
             }
         }
     }
+    
+    // Detect Pinch end gesture event
+    
+    @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        if gesture.state == .ended {
+            let zoomScale = self.scrollView.zoomScale
+            self.onZoomScaleEnd(scale: Float(zoomScale))
+        }
+    }
 
     public func prepare() {
         scrollView.addGestureRecognizer(self.longPressRecognizer)
         scrollView.addGestureRecognizer(self.recognizerForDisablingContextMenuOnLinks)
         scrollView.addGestureRecognizer(self.panGestureRecognizer)
+        scrollView.addGestureRecognizer(self.pinchGestureRecognizer)
         scrollView.addObserver(self, forKeyPath: #keyPath(UIScrollView.contentOffset), options: [.new, .old], context: nil)
         scrollView.addObserver(self, forKeyPath: #keyPath(UIScrollView.zoomScale), options: [.new, .old], context: nil)
         
@@ -2527,6 +2541,12 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
         let arguments: [String: Any] = ["newScale": newScale, "oldScale": oldScale]
         channel?.invokeMethod("onZoomScaleChanged", arguments: arguments)
     }
+
+    public func onZoomScaleEnd(scale: Float) {
+        let arguments: [String: Any] = ["scale": scale]
+        channel?.invokeMethod("onZoomScaleEnd", arguments: arguments)
+    }
+    
     
     public func onOverScrolled(x: Int, y: Int, clampedX: Bool, clampedY: Bool) {
         let arguments: [String: Any] = ["x": x, "y": y, "clampedX": clampedX, "clampedY": clampedY]
@@ -2898,6 +2918,10 @@ if(window.\(JAVASCRIPT_BRIDGE_NAME)[\(_callHandlerID)] != null) {
         let currentZoomScale = scrollView.zoomScale
         scrollView.setZoomScale(currentZoomScale * CGFloat(zoomFactor), animated: animated)
     }
+
+    public func setZoomBy(zoomValue: Float, animated: Bool) {
+        scrollView.setZoomScale(CGFloat(zoomValue), animated: animated)
+    }
     
     public func getOriginalUrl() -> URL? {
         return currentOriginalUrl
@@ -3102,6 +3126,9 @@ if(window.\(JAVASCRIPT_BRIDGE_NAME)[\(_callHandlerID)] != null) {
         panGestureRecognizer.removeTarget(self, action: #selector(endDraggingDetected))
         panGestureRecognizer.delegate = nil
         scrollView.removeGestureRecognizer(panGestureRecognizer)
+        pinchGestureRecognizer.removeTarget(self, action: #selector(handlePinch))
+        pinchGestureRecognizer.delegate = nil
+        scrollView.removeGestureRecognizer(pinchGestureRecognizer)
         disablePullToRefresh()
         pullToRefreshControl?.dispose()
         pullToRefreshControl = nil

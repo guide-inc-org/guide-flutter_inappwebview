@@ -418,6 +418,8 @@ class HeadlessInAppWebView implements WebView {
           InAppWebViewController controller, double oldScale, double newScale)?
       onZoomScaleChanged;
 
+  @override void Function(InAppWebViewController controller, double scale)? onZoomScaleEnd;
+
   @override
   Future<WebResourceResponse?> Function(
           InAppWebViewController controller, WebResourceRequest request)?

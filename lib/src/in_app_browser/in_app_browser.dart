@@ -680,6 +680,8 @@ class InAppBrowser {
   ///**Official iOS API**: https://developer.apple.com/documentation/uikit/uiscrollviewdelegate/1619409-scrollviewdidzoom
   void onZoomScaleChanged(double oldScale, double newScale) {}
 
+  void onZoomScaleEnd(double scale) {}
+
   ///Event fired when the WebView notifies that a loading URL has been flagged by Safe Browsing.
   ///The default behavior is to show an interstitial to the user, with the reporting checkbox visible.
   ///

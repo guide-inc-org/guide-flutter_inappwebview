@@ -80,6 +80,7 @@ class InAppWebView extends StatefulWidget implements WebView {
     this.onWindowBlur,
     this.onOverScrolled,
     this.onZoomScaleChanged,
+    this.onZoomScaleEnd,
     this.androidOnSafeBrowsingHit,
     this.androidOnPermissionRequest,
     this.androidOnGeolocationPermissionsShowPrompt,
@@ -329,6 +330,9 @@ class InAppWebView extends StatefulWidget implements WebView {
   final void Function(
           InAppWebViewController controller, double oldScale, double newScale)?
       onZoomScaleChanged;
+
+  @override
+  final void Function(InAppWebViewController controller, double scale)? onZoomScaleEnd;
 
   @override
   final Future<WebResourceResponse?> Function(

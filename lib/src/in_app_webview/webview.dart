@@ -428,6 +428,7 @@ abstract class WebView {
           InAppWebViewController controller, double oldScale, double newScale)?
       onZoomScaleChanged;
 
+  final void Function(InAppWebViewController controller, double scale)? onZoomScaleEnd;
   ///Event fired when the webview notifies that a loading URL has been flagged by Safe Browsing.
   ///The default behavior is to show an interstitial to the user, with the reporting checkbox visible.
   ///
@@ -729,6 +730,7 @@ abstract class WebView {
       this.onWindowBlur,
       this.onOverScrolled,
       this.onZoomScaleChanged,
+      this.onZoomScaleEnd,
       this.androidOnSafeBrowsingHit,
       this.androidOnPermissionRequest,
       this.androidOnGeolocationPermissionsShowPrompt,
