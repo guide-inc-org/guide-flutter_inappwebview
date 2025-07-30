@@ -42,8 +42,13 @@ public class SwiftFlutterPlugin: NSObject, FlutterPlugin {
         super.init()
         
         self.registrar = registrar
-        registrar.register(FlutterWebViewFactory(registrar: registrar) as FlutterPlatformViewFactory, withId: "com.pichillilorenzo/flutter_inappwebview")
-        
+        if #available(iOS 18.2, *) {
+            registrar.register(FlutterWebViewFactory(registrar: registrar) as FlutterPlatformViewFactory, withId: "com.pichillilorenzo/flutter_inappwebview",
+                                       gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicyWaitUntilTouchesEnded)
+        } else {
+            registrar.register(FlutterWebViewFactory(registrar: registrar) as FlutterPlatformViewFactory, withId: "com.pichillilorenzo/flutter_inappwebview")
+        }
+
         platformUtil = PlatformUtil(registrar: registrar)
         inAppBrowserManager = InAppBrowserManager(registrar: registrar)
         headlessInAppWebViewManager = HeadlessInAppWebViewManager(registrar: registrar)
