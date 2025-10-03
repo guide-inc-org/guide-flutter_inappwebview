@@ -15,6 +15,7 @@ A new Flutter plugin.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.resources = 'Storyboards/**/*.storyboard'
+  s.resource_bundles = {'flutter_inappwebview_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
 
@@ -30,7 +31,7 @@ A new Flutter plugin.
   s.swift_version = '5.0'
 
   s.platforms = { :ios => '11.0' }
-  s.dependency 'OrderedSet', '~>5.0'
+  s.dependency 'OrderedSet', '~>6.0.3'
 
   s.default_subspec = 'Core'
 
