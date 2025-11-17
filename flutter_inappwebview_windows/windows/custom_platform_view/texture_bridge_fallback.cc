@@ -27,6 +27,11 @@ namespace flutter_inappwebview_plugin
     const auto width = desc.Width;
     const auto height = desc.Height;
 
+    static int process_count = 0;
+    if (process_count++ % 60 == 0) {  // Log every 60 frames
+      std::cerr << "TextureBridgeFallback: ProcessFrame " << width << "x" << height << " (#" << process_count << ")" << std::endl;
+    }
+
     bool is_exact_size;
     EnsureStagingTexture(width, height, is_exact_size);
 
@@ -51,6 +56,7 @@ namespace flutter_inappwebview_plugin
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     if (!SUCCEEDED(device_context->Map(staging_texture, 0, D3D11_MAP_READ, 0,
       &mappedResource))) {
+      std::cerr << "TextureBridgeFallback: Failed to map staging texture" << std::endl;
       return;
     }
 
@@ -126,11 +132,14 @@ namespace flutter_inappwebview_plugin
     const std::lock_guard<std::mutex> lock(mutex_);
 
     if (!is_running_) {
+      std::cerr << "TextureBridgeFallback: Not running" << std::endl;
       return nullptr;
     }
 
     if (last_frame_) {
       ProcessFrame(last_frame_);
+    } else {
+      std::cerr << "TextureBridgeFallback: No frame available" << std::endl;
     }
 
     auto buffer = pixel_buffer_.get();
@@ -139,6 +148,8 @@ namespace flutter_inappwebview_plugin
     if (buffer) {
       // Gets unlocked in the FlutterDesktopPixelBuffer's release callback.
       buffer_mutex_.lock();
+    } else {
+      std::cerr << "TextureBridgeFallback: No pixel buffer" << std::endl;
     }
     return buffer;
   }

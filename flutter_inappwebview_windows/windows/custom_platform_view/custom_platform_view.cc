@@ -120,6 +120,7 @@ namespace flutter_inappwebview_plugin
     : hwnd_(hwnd), view(std::move(webView)), texture_registrar_(texture_registrar)
   {
 #ifdef HAVE_FLUTTER_D3D_TEXTURE
+    std::cerr << "CustomPlatformView: Using GPU texture mode (D3D11)" << std::endl;
     texture_bridge_ =
       std::make_unique<TextureBridgeGpu>(graphics_context, view->surface());
 
@@ -133,21 +134,28 @@ namespace flutter_inappwebview_plugin
           return bridge->GetSurfaceDescriptor(width, height);
         }));
 #else
+    std::cerr << "TextureBridge: Using CPU fallback mode (PixelBuffer)" << std::endl;
     texture_bridge_ = std::make_unique<TextureBridgeFallback>(
-      graphics_context, webview_->surface());
+      graphics_context, view->surface());
 
     flutter_texture_ =
       std::make_unique<flutter::TextureVariant>(flutter::PixelBufferTexture(
         [bridge = static_cast<TextureBridgeFallback*>(texture_bridge_.get())](
           size_t width, size_t height) -> const FlutterDesktopPixelBuffer*
         {
+          std::cerr << "TextureBridge: PixelBuffer callback " << width << "x" << height << std::endl;
           return bridge->CopyPixelBuffer(width, height);
         }));
 #endif
 
     texture_id_ = texture_registrar->RegisterTexture(flutter_texture_.get());
+    std::cerr << "TextureBridge: Registered texture ID=" << texture_id_ << std::endl;
+
     texture_bridge_->SetOnFrameAvailable(
-      [this]() { texture_registrar_->MarkTextureFrameAvailable(texture_id_); });
+      [this]() {
+        std::cerr << "TextureBridge: MarkTextureFrameAvailable called" << std::endl;
+        texture_registrar_->MarkTextureFrameAvailable(texture_id_);
+      });
     // texture_bridge_->SetOnSurfaceSizeChanged([this](Size size) {
     //  view->SetSurfaceSize(size.width, size.height);
     //});

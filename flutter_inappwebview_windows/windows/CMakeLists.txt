@@ -204,6 +204,11 @@ add_library(${PLUGIN_NAME} SHARED
   ${PLUGIN_SOURCES}
 )
 
+# Force CPU rendering (uncomment to always use CPU fallback)
+# IMPORTANT: PixelBuffer is NOT supported on Windows Flutter Engine
+# Use GPU texture mode and disable D3D11 in WebView2 browser instead
+# set(FLUTTER_WEBVIEW_WINDOWS_USE_TEXTURE_FALLBACK TRUE)
+
 if(NOT FLUTTER_WEBVIEW_WINDOWS_USE_TEXTURE_FALLBACK)
   message(STATUS "Building with D3D texture support.")
   target_compile_definitions("${PLUGIN_NAME}" PRIVATE

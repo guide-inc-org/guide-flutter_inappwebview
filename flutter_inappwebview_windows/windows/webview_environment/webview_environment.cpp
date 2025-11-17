@@ -34,8 +34,15 @@ namespace flutter_inappwebview_plugin
 
     auto options = Make<CoreWebView2EnvironmentOptions>();
     if (settings) {
+      // Force software rendering in WebView2 by disabling D3D11
+      // This prevents D3D11 rendering issues while Flutter still uses GPU texture
+      std::string disableD3D11Args = " --disable-d3d11";
+
       if (settings->additionalBrowserArguments.has_value()) {
-        options->put_AdditionalBrowserArguments(utf8_to_wide(settings->additionalBrowserArguments.value()).c_str());
+        auto args = settings->additionalBrowserArguments.value() + disableD3D11Args;
+        options->put_AdditionalBrowserArguments(utf8_to_wide(args).c_str());
+      } else {
+        options->put_AdditionalBrowserArguments(utf8_to_wide(disableD3D11Args).c_str());
       }
       if (settings->allowSingleSignOnUsingOSPrimaryAccount.has_value()) {
         options->put_AllowSingleSignOnUsingOSPrimaryAccount(settings->allowSingleSignOnUsingOSPrimaryAccount.value());

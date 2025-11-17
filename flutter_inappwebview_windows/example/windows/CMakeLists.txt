@@ -55,6 +55,9 @@ add_subdirectory("runner")
 # Enable the test target.
 set(include_flutter_inappwebview_windows_tests TRUE)
 
+# Force CPU rendering instead of GPU (D3D11) for WebView2
+set(FLUTTER_WEBVIEW_WINDOWS_USE_TEXTURE_FALLBACK TRUE)
+
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)

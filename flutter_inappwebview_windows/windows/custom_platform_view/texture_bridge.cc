@@ -47,19 +47,30 @@ namespace flutter_inappwebview_plugin
   bool TextureBridge::Start()
   {
     const std::lock_guard<std::mutex> lock(mutex_);
-    if (is_running_ || !capture_item_) {
+    if (is_running_) {
+      std::cerr << "TextureBridge: Already running" << std::endl;
+      return false;
+    }
+
+    if (!capture_item_) {
+      std::cerr << "TextureBridge: No capture item" << std::endl;
       return false;
     }
 
     ABI::Windows::Graphics::SizeInt32 size;
     capture_item_->get_Size(&size);
+    std::cerr << "TextureBridge: Starting with size " << size.Width << "x" << size.Height << std::endl;
 
     frame_pool_ = graphics_context_->CreateCaptureFramePool(
       graphics_context_->device(),
       static_cast<ABI::Windows::Graphics::DirectX::DirectXPixelFormat>(
         kPixelFormat),
       kNumBuffers, size);
-    assert(frame_pool_);
+
+    if (!frame_pool_) {
+      std::cerr << "TextureBridge: Failed to create frame pool" << std::endl;
+      return false;
+    }
 
     frame_pool_->add_FrameArrived(
       Microsoft::WRL::Callback<ABI::Windows::Foundation::ITypedEventHandler<
@@ -77,15 +88,17 @@ namespace flutter_inappwebview_plugin
 
     if (FAILED(frame_pool_->CreateCaptureSession(capture_item_.get(),
       capture_session_.put()))) {
-      std::cerr << "Creating capture session failed." << std::endl;
+      std::cerr << "TextureBridge: Creating capture session failed." << std::endl;
       return false;
     }
 
     if (SUCCEEDED(capture_session_->StartCapture())) {
       is_running_ = true;
+      std::cerr << "TextureBridge: Started successfully" << std::endl;
       return true;
     }
 
+    std::cerr << "TextureBridge: Failed to start capture" << std::endl;
     return false;
   }
 
@@ -129,7 +142,15 @@ namespace flutter_inappwebview_plugin
         last_frame_ =
           TryGetDXGIInterfaceFromObject<ID3D11Texture2D>(frame_surface);
         has_frame = !ShouldDropFrame();
+        if (has_frame) {
+          static int frame_count = 0;
+          if (frame_count++ % 60 == 0) {  // Log every 60 frames
+            std::cerr << "TextureBridge: Frame captured (#" << frame_count << ")" << std::endl;
+          }
+        }
       }
+    } else {
+      std::cerr << "TextureBridge: Failed to get frame" << std::endl;
     }
 
     if (needs_update_) {
@@ -144,7 +165,13 @@ namespace flutter_inappwebview_plugin
     }
 
     if (has_frame && frame_available_) {
+      static int notify_count = 0;
+      if (notify_count++ % 60 == 0) {  // Log every 60 frames
+        std::cerr << "TextureBridge: Notifying Flutter frame available (#" << notify_count << ")" << std::endl;
+      }
       frame_available_();
+    } else if (has_frame && !frame_available_) {
+      std::cerr << "TextureBridge: Has frame but no callback!" << std::endl;
     }
   }
 
