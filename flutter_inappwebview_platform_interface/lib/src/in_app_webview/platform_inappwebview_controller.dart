@@ -984,6 +984,25 @@ abstract class PlatformInAppWebViewController extends PlatformInterface
         'zoomBy is not implemented on the current platform');
   }
 
+  ///{@template flutter_inappwebview_platform_interface.PlatformInAppWebViewController.setZoomBy}
+  ///Sets the zoom of the WebView to the specified absolute value.
+  ///
+  ///[zoomValue] The absolute zoom scale value to set.
+  ///
+  ///[animated] `true` to animate the transition to the new scale, `false` to make the transition immediate.
+  ///**NOTE**: available only on iOS.
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- Android native WebView
+  ///- iOS
+  ///{@endtemplate}
+  Future<void> setZoomBy(
+      {required double zoomValue,
+      bool animated = false}) {
+    throw UnimplementedError(
+        'setZoomBy is not implemented on the current platform');
+  }
+
   ///{@template flutter_inappwebview_platform_interface.PlatformInAppWebViewController.getOriginalUrl}
   ///Gets the URL that was originally requested for the current page.
   ///This is not always the same as the URL passed to [InAppWebView.onLoadStart] because although the load for that URL has begun,

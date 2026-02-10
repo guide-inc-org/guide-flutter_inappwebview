@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.GestureDetector;
+import android.view.ScaleGestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -143,6 +144,8 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
   public Pattern regexToCancelSubFramesLoadingCompiled;
   @Nullable
   public GestureDetector gestureDetector = null;
+  @Nullable
+  public ScaleGestureDetector scaleGestureDetector = null;
   @Nullable
   public LinearLayout floatingContextMenu = null;
   @Nullable
@@ -471,6 +474,16 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
       }
     });
 
+    scaleGestureDetector = new ScaleGestureDetector(this.getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+      @Override
+      public void onScaleEnd(ScaleGestureDetector detector) {
+        super.onScaleEnd(detector);
+        if (channelDelegate != null) {
+          channelDelegate.onZoomScaleEnd(zoomScale);
+        }
+      }
+    });
+
     checkScrollStoppedTask = new Runnable() {
       @Override
       public void run() {
@@ -514,6 +527,7 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
       @Override
       public boolean onTouch(View v, MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+        scaleGestureDetector.onTouchEvent(event);
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
           checkScrollStoppedTask.run();

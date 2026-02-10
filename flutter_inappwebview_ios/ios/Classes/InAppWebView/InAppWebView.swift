@@ -53,6 +53,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
     var lastLongPressTouchPoint: CGPoint?
     
     var panGestureRecognizer: UIPanGestureRecognizer!
+    var pinchGestureRecognizer: UIPinchGestureRecognizer!
     
     var lastTouchPoint: CGPoint?
     var lastTouchPointTimestamp = Int64(Date().timeIntervalSince1970 * 1000)
@@ -94,6 +95,9 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         panGestureRecognizer = UIPanGestureRecognizer()
         panGestureRecognizer.delegate = self
         panGestureRecognizer.addTarget(self, action: #selector(endDraggingDetected))
+        pinchGestureRecognizer = UIPinchGestureRecognizer()
+        pinchGestureRecognizer.delegate = self
+        pinchGestureRecognizer.addTarget(self, action: #selector(handlePinch))
     }
     
     override public var frame: CGRect {
@@ -102,15 +106,24 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         }
         set {
             super.frame = newValue
-            
+
             self.scrollView.contentInset = .zero
+            var bottomPadding: CGFloat = 0.0
+            if #available(iOS 13.0, *) {
+                let window = UIApplication.shared.windows.first
+                bottomPadding = window?.safeAreaInsets.bottom ?? 0.0
+            } else if #available(iOS 11.0, *) {
+                let window = UIApplication.shared.keyWindow
+                bottomPadding = window?.safeAreaInsets.bottom ?? 0.0
+            }
             if #available(iOS 11, *) {
                 // Above iOS 11, adjust contentInset to compensate the adjustedContentInset so the sum will
                 // always be 0.
                 if (scrollView.adjustedContentInset != UIEdgeInsets.zero) {
                     let insetToAdjust = self.scrollView.adjustedContentInset
+                    let bottom = self.settings?.needExtraBottomPadding == true ? bottomPadding : -insetToAdjust.bottom
                     scrollView.contentInset = UIEdgeInsets(top: -insetToAdjust.top, left: -insetToAdjust.left,
-                                                                bottom: -insetToAdjust.bottom, right: -insetToAdjust.right)
+                                                                bottom: bottom, right: -insetToAdjust.right)
                 }
             }
         }
@@ -344,10 +357,18 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         }
     }
 
+    @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        if gesture.state == .ended {
+            let zoomScale = self.scrollView.zoomScale
+            self.channelDelegate?.onZoomScaleEnd(scale: Float(zoomScale))
+        }
+    }
+
     public func prepare() {
         scrollView.addGestureRecognizer(self.longPressRecognizer)
         scrollView.addGestureRecognizer(self.recognizerForDisablingContextMenuOnLinks)
         scrollView.addGestureRecognizer(self.panGestureRecognizer)
+        scrollView.addGestureRecognizer(self.pinchGestureRecognizer)
         scrollView.addObserver(self, forKeyPath: #keyPath(UIScrollView.contentOffset), options: [.new, .old], context: nil)
         scrollView.addObserver(self, forKeyPath: #keyPath(UIScrollView.zoomScale), options: [.new, .old], context: nil)
         scrollView.addObserver(self, forKeyPath: #keyPath(UIScrollView.contentSize), options: [.new, .old], context: nil)
@@ -412,7 +433,15 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
                                                    name: UIWindow.didBecomeHiddenNotification,
                                                    object: window)
 //        }
-        
+
+        // listen only for iOS 13.* and earlier
+        if #unavailable(iOS 14) {
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(keyboardWillHide(notification:)),
+                                                   name: UIResponder.keyboardWillHideNotification,
+                                                   object: nil)
+        }
+
         if let settings = settings {
             if settings.transparentBackground {
                 isOpaque = false
@@ -2760,6 +2789,12 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         }
     }
     
+    @objc func keyboardWillHide(notification: NSNotification) {
+        // sometimes scrollView.contentSize doesn't fit all the frame.size available
+        // so, we call setNeedsLayout to redraw the layout
+        setNeedsLayout()
+    }
+
     @objc func onExitFullscreen(_ notification: Notification) {
         // TODO: Still not working on iOS 16.0!
 //        if #available(iOS 16.0, *) {
@@ -3075,7 +3110,11 @@ if(window.\(JAVASCRIPT_BRIDGE_NAME)[\(_callHandlerID)] != null) {
         let currentZoomScale = scrollView.zoomScale
         scrollView.setZoomScale(currentZoomScale * CGFloat(zoomFactor), animated: animated)
     }
-    
+
+    public func setZoomBy(zoomValue: Float, animated: Bool) {
+        scrollView.setZoomScale(CGFloat(zoomValue), animated: animated)
+    }
+
     public func getOriginalUrl() -> URL? {
         return currentOriginalUrl
     }
@@ -3316,6 +3355,9 @@ if(window.\(JAVASCRIPT_BRIDGE_NAME)[\(_callHandlerID)] != null) {
         panGestureRecognizer.removeTarget(self, action: #selector(endDraggingDetected))
         panGestureRecognizer.delegate = nil
         scrollView.removeGestureRecognizer(panGestureRecognizer)
+        pinchGestureRecognizer.removeTarget(self, action: #selector(handlePinch))
+        pinchGestureRecognizer.delegate = nil
+        scrollView.removeGestureRecognizer(pinchGestureRecognizer)
         disablePullToRefresh()
         pullToRefreshControl?.dispose()
         pullToRefreshControl = nil

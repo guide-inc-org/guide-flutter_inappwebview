@@ -676,6 +676,20 @@ class IOSInAppWebViewController extends PlatformInAppWebViewController
           }
         }
         break;
+      case "onZoomScaleEnd":
+        if ((webviewParams != null &&
+                webviewParams!.onZoomScaleEnd != null) ||
+            _inAppBrowserEventHandler != null) {
+          double scale = call.arguments["scale"];
+          if (webviewParams != null) {
+            if (webviewParams!.onZoomScaleEnd != null)
+              webviewParams!.onZoomScaleEnd!(
+                  _controllerFromPlatform, scale);
+          } else {
+            _inAppBrowserEventHandler!.onZoomScaleEnd(scale);
+          }
+        }
+        break;
       case "onReceivedIcon":
         if ((webviewParams != null &&
                 (webviewParams!.onReceivedIcon != null ||
@@ -2182,6 +2196,16 @@ class IOSInAppWebViewController extends PlatformInAppWebViewController
     args.putIfAbsent('zoomFactor', () => zoomFactor);
     args.putIfAbsent('animated', () => iosAnimated ?? animated);
     return await channel?.invokeMethod('zoomBy', args);
+  }
+
+  @override
+  Future<void> setZoomBy(
+      {required double zoomValue,
+      bool animated = false}) async {
+    Map<String, dynamic> args = <String, dynamic>{};
+    args.putIfAbsent('zoomValue', () => zoomValue);
+    args.putIfAbsent('animated', () => animated);
+    return await channel?.invokeMethod('setZoomBy', args);
   }
 
   @override

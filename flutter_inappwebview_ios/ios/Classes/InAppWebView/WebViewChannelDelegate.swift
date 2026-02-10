@@ -306,6 +306,12 @@ public class WebViewChannelDelegate: ChannelDelegate {
             webView?.zoomBy(zoomFactor: zoomFactor, animated: animated)
             result(true)
             break
+        case .setZoomBy:
+            let zoomValue = (arguments!["zoomValue"] as! NSNumber).floatValue
+            let animated = arguments!["animated"] as! Bool
+            webView?.setZoomBy(zoomValue: zoomValue, animated: animated)
+            result(true)
+            break
         case .reloadFromOrigin:
             webView?.reloadFromOrigin()
             result(true)
@@ -1048,7 +1054,14 @@ public class WebViewChannelDelegate: ChannelDelegate {
         ]
         channel?.invokeMethod("onZoomScaleChanged", arguments: arguments)
     }
-    
+
+    public func onZoomScaleEnd(scale: Float) {
+        let arguments: [String: Any?] = [
+            "scale": scale
+        ]
+        channel?.invokeMethod("onZoomScaleEnd", arguments: arguments)
+    }
+
     public func onPageCommitVisible(url: String?) {
         let arguments: [String: Any?] = [
             "url": url

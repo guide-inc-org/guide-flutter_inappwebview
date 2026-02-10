@@ -2,16 +2,21 @@ package com.pichillilorenzo.flutter_inappwebview_android.webview.in_app_webview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.hardware.display.DisplayManager;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.webkit.WebViewFeature;
 
 import com.pichillilorenzo.flutter_inappwebview_android.InAppWebViewFlutterPlugin;
@@ -27,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class FlutterWebView implements PlatformWebView {
 
@@ -37,7 +43,11 @@ public class FlutterWebView implements PlatformWebView {
   @Nullable
   public PullToRefreshLayout pullToRefreshLayout;
   @Nullable
+  public LinearLayout linearLayout;
+  @Nullable
   public String keepAliveId;
+  private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener;
+  private View rootView;
 
   public FlutterWebView(final InAppWebViewFlutterPlugin plugin, final Context context, Object id,
                         HashMap<String, Object> params) {
@@ -69,11 +79,45 @@ public class FlutterWebView implements PlatformWebView {
 
     // set MATCH_PARENT layout params to the WebView, otherwise it won't take all the available space!
     webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    rootView = plugin.activity != null ? plugin.activity.findViewById(android.R.id.content) : null;
     PullToRefreshSettings pullToRefreshSettings = new PullToRefreshSettings();
     pullToRefreshSettings.parse(pullToRefreshInitialSettings);
     pullToRefreshLayout = new PullToRefreshLayout(context, plugin, id, pullToRefreshSettings);
     pullToRefreshLayout.addView(webView);
     pullToRefreshLayout.prepare();
+
+    if (customSettings.needExtraBottomPadding) {
+      linearLayout = new LinearLayout(context);
+      linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+      linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+      if (pullToRefreshLayout != null) {
+        linearLayout.addView(pullToRefreshLayout);
+      } else {
+        linearLayout.addView(webView);
+      }
+
+      keyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+          if (plugin.activity == null) {
+            return;
+          }
+
+          WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(plugin.activity.getWindow().getDecorView());
+          if (insets == null) {
+            return;
+          }
+
+          int bottomHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom - getNavigationHeight();
+          linearLayout.setPadding(0, 0, 0, Math.max(bottomHeight, 0));
+        }
+      };
+    }
+
+    if (keyboardLayoutListener != null && rootView != null) {
+      rootView.getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
+    }
 
     FindInteractionController findInteractionController = new FindInteractionController(webView, plugin, id, null);
     webView.findInteractionController = findInteractionController;
@@ -84,6 +128,9 @@ public class FlutterWebView implements PlatformWebView {
 
   @Override
   public View getView() {
+    if (linearLayout != null) {
+      return linearLayout;
+    }
     return pullToRefreshLayout != null ? pullToRefreshLayout : webView;
   }
 
@@ -150,6 +197,10 @@ public class FlutterWebView implements PlatformWebView {
 
   @Override
   public void dispose() {
+    if (keyboardLayoutListener != null && rootView != null) {
+      rootView.getViewTreeObserver().removeOnGlobalLayoutListener(keyboardLayoutListener);
+      keyboardLayoutListener = null;
+    }
     if (keepAliveId == null && webView != null) {
       webView.dispose();
       webView = null;
@@ -158,6 +209,8 @@ public class FlutterWebView implements PlatformWebView {
         pullToRefreshLayout.dispose();
         pullToRefreshLayout = null;
       }
+
+      linearLayout = null;
     }
   }
 
@@ -185,5 +238,15 @@ public class FlutterWebView implements PlatformWebView {
     if (webView != null && !webView.customSettings.useHybridComposition) {
       webView.setContainerView(null);
     }
+  }
+
+  private int getNavigationHeight() {
+    if (getView() == null) return 0;
+    Resources resources = Objects.requireNonNull(getView()).getResources();
+    int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+    if (resourceId > 0) {
+      return resources.getDimensionPixelSize(resourceId);
+    }
+    return 0;
   }
 }

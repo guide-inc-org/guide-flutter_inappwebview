@@ -407,6 +407,13 @@ because there isn't any way to make the website data store non-persistent for th
   ])
   bool? allowUniversalAccessFromFileURLs;
 
+  ///Set to `true` if the WebView needs extra bottom padding when opening the keyboard. The default value is `false`.
+  @SupportedPlatforms(platforms: [
+    AndroidPlatform(),
+    IOSPlatform()
+  ])
+  bool? needExtraBottomPadding;
+
   ///Set to `true` to allow audio playing when the app goes in background or the screen is locked or another app is opened.
   ///However, there will be no controls in the notification bar or on the lockscreen.
   ///Also, make sure to not call [PlatformInAppWebViewController.pause], otherwise it will stop audio playing.
@@ -2021,6 +2028,9 @@ class InAppWebViewOptions
   ///The default value is `false`.
   bool allowUniversalAccessFromFileURLs;
 
+  ///Set to `true` if the WebView needs extra bottom padding when opening the keyboard. The default value is `false`.
+  bool needExtraBottomPadding;
+
   InAppWebViewOptions(
       {this.useShouldOverrideUrlLoading = false,
       this.useOnLoadResource = false,
@@ -2047,7 +2057,8 @@ class InAppWebViewOptions
       this.disableContextMenu = false,
       this.supportZoom = true,
       this.allowFileAccessFromFileURLs = false,
-      this.allowUniversalAccessFromFileURLs = false}) {
+      this.allowUniversalAccessFromFileURLs = false,
+      this.needExtraBottomPadding = false}) {
     if (this.minimumFontSize == null)
       this.minimumFontSize = Util.isAndroid ? 8 : 0;
     assert(!this.resourceCustomSchemes.contains("http") &&
@@ -2087,7 +2098,8 @@ class InAppWebViewOptions
       "disableContextMenu": disableContextMenu,
       "supportZoom": supportZoom,
       "allowFileAccessFromFileURLs": allowFileAccessFromFileURLs,
-      "allowUniversalAccessFromFileURLs": allowUniversalAccessFromFileURLs
+      "allowUniversalAccessFromFileURLs": allowUniversalAccessFromFileURLs,
+      "needExtraBottomPadding": needExtraBottomPadding
     };
   }
 
@@ -2135,6 +2147,7 @@ class InAppWebViewOptions
     instance.allowFileAccessFromFileURLs = map["allowFileAccessFromFileURLs"];
     instance.allowUniversalAccessFromFileURLs =
         map["allowUniversalAccessFromFileURLs"];
+    instance.needExtraBottomPadding = map["needExtraBottomPadding"];
     return instance;
   }
 

@@ -198,6 +198,8 @@ class InAppWebView extends StatefulWidget {
     void Function(InAppWebViewController controller, double oldScale,
             double newScale)?
         onZoomScaleChanged,
+    void Function(InAppWebViewController controller, double scale)?
+        onZoomScaleEnd,
     @Deprecated('Use shouldInterceptRequest instead')
     Future<WebResourceResponse?> Function(
             InAppWebViewController controller, WebResourceRequest request)?
@@ -471,6 +473,10 @@ class InAppWebView extends StatefulWidget {
               onZoomScaleChanged: onZoomScaleChanged != null
                   ? (controller, oldScale, newScale) =>
                       onZoomScaleChanged.call(controller, oldScale, newScale)
+                  : null,
+              onZoomScaleEnd: onZoomScaleEnd != null
+                  ? (controller, scale) =>
+                      onZoomScaleEnd.call(controller, scale)
                   : null,
               androidOnSafeBrowsingHit: androidOnSafeBrowsingHit != null
                   ? (controller, url, threatType) =>

@@ -1045,6 +1045,15 @@ abstract class PlatformInAppBrowserEvents {
   ///- iOS ([Official API - UIScrollViewDelegate.scrollViewDidZoom](https://developer.apple.com/documentation/uikit/uiscrollviewdelegate/1619409-scrollviewdidzoom))
   void onZoomScaleChanged(double oldScale, double newScale) {}
 
+  ///Event fired when the zoom scale gesture of the WebView has ended.
+  ///
+  ///[scale] The current zoom scale factor.
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- Android native WebView
+  ///- iOS
+  void onZoomScaleEnd(double scale) {}
+
   ///Use [onSafeBrowsingHit] instead.
   @Deprecated("Use onSafeBrowsingHit instead")
   Future<SafeBrowsingResponse?>? androidOnSafeBrowsingHit(

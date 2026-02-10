@@ -64,6 +64,7 @@ class PlatformHeadlessInAppWebViewCreationParams
       super.onWindowBlur,
       super.onOverScrolled,
       super.onZoomScaleChanged,
+      super.onZoomScaleEnd,
       @Deprecated('Use onSafeBrowsingHit instead')
       super.androidOnSafeBrowsingHit,
       super.onSafeBrowsingHit,

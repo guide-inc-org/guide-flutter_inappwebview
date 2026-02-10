@@ -515,6 +515,9 @@ class InAppBrowser implements PlatformInAppBrowserEvents {
   void onZoomScaleChanged(double oldScale, double newScale) {}
 
   @override
+  void onZoomScaleEnd(double scale) {}
+
+  @override
   Future<ShouldAllowDeprecatedTLSAction?>? shouldAllowDeprecatedTLS(
       URLAuthenticationChallenge challenge) {
     return null;

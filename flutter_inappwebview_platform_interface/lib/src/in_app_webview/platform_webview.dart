@@ -643,6 +643,18 @@ class PlatformWebViewCreationParams<T> {
   final void Function(T controller, double oldScale, double newScale)?
       onZoomScaleChanged;
 
+  ///{@template flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onZoomScaleEnd}
+  ///Event fired when the zoom scale gesture of the WebView has ended.
+  ///
+  ///[scale] The current zoom scale factor.
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- Android native WebView
+  ///- iOS
+  ///{@endtemplate}
+  final void Function(T controller, double scale)?
+      onZoomScaleEnd;
+
   ///Use [onSafeBrowsingHit] instead.
   @Deprecated("Use onSafeBrowsingHit instead")
   final Future<SafeBrowsingResponse?> Function(
@@ -1203,6 +1215,7 @@ class PlatformWebViewCreationParams<T> {
       this.onWindowBlur,
       this.onOverScrolled,
       this.onZoomScaleChanged,
+      this.onZoomScaleEnd,
       @Deprecated('Use onSafeBrowsingHit instead')
       this.androidOnSafeBrowsingHit,
       this.onSafeBrowsingHit,

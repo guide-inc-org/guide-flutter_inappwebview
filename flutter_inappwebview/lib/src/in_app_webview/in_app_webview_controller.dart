@@ -273,6 +273,13 @@ class InAppWebViewController {
       platform.zoomBy(
           zoomFactor: zoomFactor, iosAnimated: iosAnimated, animated: animated);
 
+  ///{@macro flutter_inappwebview_platform_interface.PlatformInAppWebViewController.setZoomBy}
+  Future<void> setZoomBy(
+          {required double zoomValue,
+          bool animated = false}) =>
+      platform.setZoomBy(
+          zoomValue: zoomValue, animated: animated);
+
   ///{@macro flutter_inappwebview_platform_interface.PlatformInAppWebViewController.getOriginalUrl}
   Future<WebUri?> getOriginalUrl() => platform.getOriginalUrl();
 

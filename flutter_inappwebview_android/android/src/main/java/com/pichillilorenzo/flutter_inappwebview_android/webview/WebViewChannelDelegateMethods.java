@@ -53,6 +53,7 @@ public enum WebViewChannelDelegateMethods {
   getContentHeight,
   getContentWidth,
   zoomBy,
+  setZoomBy,
   getOriginalUrl,
   getZoomScale,
   getSelectedText,

@@ -52,6 +52,7 @@ public enum WebViewChannelDelegateMethods: String {
     case getContentHeight = "getContentHeight"
     case getContentWidth = "getContentWidth"
     case zoomBy = "zoomBy"
+    case setZoomBy = "setZoomBy"
     case reloadFromOrigin = "reloadFromOrigin"
     case getOriginalUrl = "getOriginalUrl"
     case getZoomScale = "getZoomScale"

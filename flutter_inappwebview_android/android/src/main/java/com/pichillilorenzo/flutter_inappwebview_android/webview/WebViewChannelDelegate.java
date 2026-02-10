@@ -395,6 +395,14 @@ public class WebViewChannelDelegate extends ChannelDelegateImpl {
         }
         result.success(true);
         break;
+      case setZoomBy:
+        if (webView != null) {
+          double zoomValue = (double) call.argument("zoomValue");
+          boolean animated = (boolean) call.argument("animated");
+          webView.setInitialScale((int) (zoomValue * 100));
+        }
+        result.success(true);
+        break;
       case getOriginalUrl:
         result.success((webView != null) ? webView.getOriginalUrl() : null);
         break;
@@ -1087,6 +1095,14 @@ public class WebViewChannelDelegate extends ChannelDelegateImpl {
     obj.put("oldScale", oldScale);
     obj.put("newScale", newScale);
     channel.invokeMethod("onZoomScaleChanged", obj);
+  }
+
+  public void onZoomScaleEnd(float scale) {
+    MethodChannel channel = getChannel();
+    if (channel == null) return;
+    Map<String, Object> obj = new HashMap<>();
+    obj.put("scale", (double) scale);
+    channel.invokeMethod("onZoomScaleEnd", obj);
   }
 
   public static class SafeBrowsingHitCallback extends BaseCallbackResultImpl<SafeBrowsingResponse> {
