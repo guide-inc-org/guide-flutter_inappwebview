@@ -117,6 +117,7 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
   public Boolean useOnRenderProcessGone = false;
   public Boolean disableDefaultErrorPage = false;
   public Boolean useHybridComposition = true;
+  public Boolean needExtraBottomPadding = false;
   @Nullable
   public String verticalScrollbarThumbColor;
   @Nullable
@@ -382,6 +383,9 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
         case "useHybridComposition":
           useHybridComposition = (Boolean) value;
           break;
+        case "needExtraBottomPadding":
+          needExtraBottomPadding = (Boolean) value;
+          break;
         case "verticalScrollbarThumbColor":
           verticalScrollbarThumbColor = (String) value;
           break;
@@ -501,6 +505,7 @@ public class InAppWebViewSettings implements ISettings<InAppWebViewInterface> {
     settings.put("useOnRenderProcessGone", useOnRenderProcessGone);
     settings.put("disableDefaultErrorPage", disableDefaultErrorPage);
     settings.put("useHybridComposition", useHybridComposition);
+    settings.put("needExtraBottomPadding", needExtraBottomPadding);
     settings.put("verticalScrollbarThumbColor", verticalScrollbarThumbColor);
     settings.put("verticalScrollbarTrackColor", verticalScrollbarTrackColor);
     settings.put("horizontalScrollbarThumbColor", horizontalScrollbarThumbColor);

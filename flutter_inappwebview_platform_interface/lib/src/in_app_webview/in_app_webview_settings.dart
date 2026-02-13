@@ -819,6 +819,12 @@ as it can cause framerate drops on animations in Android 9 and lower (see [Hybri
   ])
   bool? useHybridComposition;
 
+  ///Set to `true` to add an extra bottom padding to the WebView when a software keyboard is displayed.
+  @SupportedPlatforms(platforms: [
+    AndroidPlatform()
+  ])
+  bool? needExtraBottomPadding;
+
   ///Set to `true` to be able to listen at the [PlatformWebViewCreationParams.shouldInterceptRequest] event.
   ///
   ///If the [PlatformWebViewCreationParams.shouldInterceptRequest] event is implemented and this value is `null`,
@@ -1727,6 +1733,7 @@ as it can cause framerate drops on animations in Android 9 and lower (see [Hybri
     this.supportMultipleWindows = false,
     this.regexToCancelSubFramesLoading,
     this.useHybridComposition = true,
+    this.needExtraBottomPadding = false,
     this.useShouldInterceptRequest,
     this.useOnRenderProcessGone,
     this.overScrollMode = OverScrollMode_.IF_CONTENT_SCROLLS,
