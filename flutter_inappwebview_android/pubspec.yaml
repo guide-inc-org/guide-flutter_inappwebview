@@ -20,7 +20,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_inappwebview_platform_interface: ^1.3.0
+  flutter_inappwebview_platform_interface:
+    git:
+      url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
+      ref: jbkfx/v6.1.5+1
+      path: flutter_inappwebview_platform_interface
 
 dev_dependencies:
   flutter_test:
