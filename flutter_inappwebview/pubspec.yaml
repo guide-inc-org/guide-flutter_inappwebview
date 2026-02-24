@@ -25,12 +25,31 @@ dependencies:
       url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
       ref: jbkfx/v6.1.5+1
       path: flutter_inappwebview_platform_interface
-
-  flutter_inappwebview_android: ^1.1.3
-  flutter_inappwebview_ios: ^1.1.2
-  flutter_inappwebview_macos: ^1.1.2
-  flutter_inappwebview_web: ^1.1.2
-  flutter_inappwebview_windows: ^0.6.0
+  flutter_inappwebview_android:
+    git:
+      url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
+      ref: jbkfx/v6.1.5+1
+      path: flutter_inappwebview_android
+  flutter_inappwebview_ios:
+    git:
+      url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
+      ref: jbkfx/v6.1.5+1
+      path: flutter_inappwebview_ios
+  flutter_inappwebview_macos:
+    git:
+      url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
+      ref: jbkfx/v6.1.5+1
+      path: flutter_inappwebview_macos
+  flutter_inappwebview_web:
+    git:
+      url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
+      ref: jbkfx/v6.1.5+1
+      path: flutter_inappwebview_web
+  flutter_inappwebview_windows:
+    git:
+      url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
+      ref: jbkfx/v6.1.5+1
+      path: flutter_inappwebview_windows
 
 dev_dependencies:
   flutter_test:
