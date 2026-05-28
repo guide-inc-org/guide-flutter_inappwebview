@@ -37,7 +37,8 @@ public class HeadlessInAppWebView: Disposable {
             } else {
                 view.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             }
-            if let keyWindow = UIApplication.shared.keyWindow {
+            // Use the shared extension for getting key window
+            if let keyWindow = UIApplication.shared.keyWindowCompat {
                 /// Note: The WKWebView behaves very unreliable when rendering offscreen
                 /// on a device. This is especially true with JavaScript, which simply
                 /// won't be executed sometimes.
@@ -48,7 +49,6 @@ public class HeadlessInAppWebView: Disposable {
             }
         }
     }
-    
     public func setSize(size: Size2D) {
         if let view = flutterWebView?.view() {
             let width = size.width == -1.0 ? UIScreen.main.bounds.width : CGFloat(size.width)
