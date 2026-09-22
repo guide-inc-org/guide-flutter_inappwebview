@@ -23,7 +23,7 @@ dependencies:
   flutter_inappwebview_platform_interface:
     git:
       url: https://github.com/guide-inc-org/guide-flutter_inappwebview.git
-      ref: kcfx/v6.1.5_1
+      ref: kcfx/v6.1.5+2
       path: flutter_inappwebview_platform_interface
 
 dev_dependencies:
@@ -51,7 +51,7 @@ flutter:
     implements: flutter_inappwebview
     platforms:
       ios:
-        pluginClass: InAppWebViewFlutterPlugin
+        pluginClass: SwiftFlutterPlugin
         dartPluginClass: IOSInAppWebViewPlatform
 
   # To add assets to your plugin package, add an assets section, like this:

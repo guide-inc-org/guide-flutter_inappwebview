@@ -13,11 +13,11 @@ A new Flutter plugin.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.resources = 'Storyboards/**/*.storyboard'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'flutter_inappwebview_ios/Sources/flutter_inappwebview_ios/**/*'
+  s.exclude_files = 'flutter_inappwebview_ios/Sources/flutter_inappwebview_ios/Resources/**/*', 'flutter_inappwebview_ios/Sources/flutter_inappwebview_ios/Storyboards/**/*'
+  s.resources = 'flutter_inappwebview_ios/Sources/flutter_inappwebview_ios/Storyboards/**/*.storyboard'
   s.dependency 'Flutter'
-  s.resource_bundles = {'flutter_inappwebview_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'flutter_inappwebview_ios_privacy' => ['flutter_inappwebview_ios/Sources/flutter_inappwebview_ios/Resources/PrivacyInfo.xcprivacy']}
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
